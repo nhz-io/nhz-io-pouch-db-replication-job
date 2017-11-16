@@ -242,7 +242,7 @@ Promise states meaning:
 
         t.equals err.status, 500
 
-## Version 1.1.0
+## Version 1.1.1
 
 ## License [MIT](LICENSE)
 
