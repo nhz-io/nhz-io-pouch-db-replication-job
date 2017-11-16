@@ -10,8 +10,19 @@ npm i -S @nhz.io/pouch-db-replication-job
 ```
 
 ## Usage
+
+> Intended to be used with [pouchdb-job-scheduler]
+
 ```js
-const pouchDbReplicationJob = require('@nhz.io/pouch-db-replication-job')
+const PouchDB = require 'pouchdb'
+const replication = require('@nhz.io/pouch-db-replication-job')
+
+const startJob = replication { /* PouchDb replication options */}, source, target
+const job = startJob { PouchDB }
+
+...
+
+const res = await job
 
 ...
 ```
@@ -237,3 +248,5 @@ Promise states meaning:
 
 [travis]: https://img.shields.io/travis/nhz-io/nhz-io-pouch-db-replication-job.svg?style=flat
 [npm]: https://img.shields.io/npm/v/@nhz.io/pouch-db-replication-job.svg?style=flat
+
+[pouchdb-job-scheduler]: https://github.com/nhz-io/nhz-io-pouch-db-job-scheduler
