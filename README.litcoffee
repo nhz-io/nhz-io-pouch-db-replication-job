@@ -23,11 +23,13 @@ const pouchDbReplicationJob = require('@nhz.io/pouch-db-replication-job')
 
 ### Helpers
 
-    keys = (obj) -> Object.keys obj
-
     assign = (sources...) -> Object.assign {}, sources...
 
     isString = (maybeString) -> typeof maybeString is 'string'
+
+    getter = (obj, name, fn) -> Object.defineProperty obj, name, {
+      configurable: true, enumerable: true, get: fn
+    }
 
 ### Definitions
 
@@ -114,7 +116,9 @@ Promise states meaning:
 
           job.error = false
 
-          resolve job.replication.state
+> Create result by stripping promise from the job and aliasing job.info
+
+          resolve getter (assign job), 'info', () -> job.info
 
 #### PouchDB replication events
 
@@ -150,9 +154,7 @@ Promise states meaning:
 
 ## Tests
 
-    tape = require 'tape'
-    _test = (require 'tape-promise').default
-    test = _test(tape)
+    test = require 'tape-async'
 
     PouchDB = require 'pouchdb-memory'
 
@@ -178,7 +180,9 @@ Promise states meaning:
 
       startJob = pouchDbReplicationJob {}, source, target
 
-      await job = startJob { PouchDB }
+      res = await job = startJob { PouchDB }
+
+      t.equals res.info, job.info
 
       target = job.target
 
@@ -186,7 +190,9 @@ Promise states meaning:
 
       job.stop()
 
-      t.equals job.info.status, 'complete'
+      t.equals res.info, job.info
+
+      t.equals res.info.status, 'complete'
 
 > Live
 
@@ -194,7 +200,9 @@ Promise states meaning:
 
       startJob = pouchDbReplicationJob { live: true, retry: true }, source, target
 
-      await job = startJob { PouchDB }
+      res = await job = startJob { PouchDB }
+
+      t.equals res.info, job.info
 
       target = job.target
 
@@ -202,7 +210,9 @@ Promise states meaning:
 
       job.stop()
 
-      t.equals job.info.status, 'cancelled'
+      t.equals res.info, job.info
+
+      t.equals res.info.status, 'cancelled'
 
 > Failure
 

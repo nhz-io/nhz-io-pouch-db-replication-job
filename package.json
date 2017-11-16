@@ -40,8 +40,7 @@
     "faucet": "0.0.1",
     "husky": "^0.14.3",
     "pouchdb-memory": "^6.0.0",
-    "tape": "^4.8.0",
-    "tape-promise": "^2.0.1"
+    "tape-async": "^2.3.0"
   },
   "dependencies": {
     "curry-n": "^1.0.2"
