@@ -94,8 +94,11 @@ Promise states meaning:
   * otherwise, `err` contains the reason and will be set to `job.error`
 
 >
+      resolve = reject = null
 
-      job = new Promise (resolve, reject) ->
+      job = new Promise (_resolve, _reject) ->
+
+        [resolve, reject] = [_resolve, _reject]
 
         replication = ctx.PouchDB.replicate source, target, assign options
 
@@ -104,6 +107,8 @@ Promise states meaning:
         stop = (err) ->
 
           replication.cancel()
+
+          job.finished = true
 
           return if job.done
 
@@ -131,6 +136,7 @@ Promise states meaning:
 
           resolve getter (assign job), 'info', () -> job.info
 
+
 #### PouchDB replication events
 
         replication.on 'error', stop
@@ -157,6 +163,17 @@ Promise states meaning:
 
       Object.assign job, {
         uid, options, stop, source, target, replication
+
+        continue: ->
+
+          return if job.finished
+
+          return job unless job.done
+
+          job.done = false
+
+          job.continue = new Promise (_resolve, _reject) -> [resolve, reject] = [_resolve, _reject]
+
       }
 
 ## Exports (Curried)
